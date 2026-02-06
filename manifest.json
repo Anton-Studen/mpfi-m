@@ -2,7 +2,7 @@
   "name": "MPFI - Опросник психологической гибкости",
   "short_name": "MPFI",
   "description": "Мультимерный опросник психологической гибкости",
-  "start_url": "./mpfi.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0284c7",
