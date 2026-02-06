@@ -1,3 +1,989 @@
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="icon-192.png">
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0284c7">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MPFI">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> 
+<link rel="apple-touch-icon" href="icon-192.png"> 
 <meta name="description" content="Мультимерный опросник психологической гибкости">
+<title>MPFI Тест</title>
+
+<style>
+:root {
+  --color-primary: #0284c7;
+  --color-primary-hover: #0369a1;
+  --color-background: #ffffff;
+  --color-surface: #f8fafc;
+  --color-text: #0f172a;
+  --color-text-secondary: #475569;
+  --color-border: #e2e8f0;
+  --color-success: #0284c7;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: var(--color-primary);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.header .subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.progress-bar-container {
+  background: rgba(255,255,255,0.2);
+  height: 4px;
+  margin-top: 12px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: white;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+.welcome-screen {
+  text-align: left;
+}
+
+.welcome-screen h2 {
+  color: var(--color-primary);
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.welcome-screen h3 {
+  color: var(--color-text);
+  font-size: 20px;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.welcome-screen p {
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+
+.instructions {
+  background: var(--color-surface);
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px 0;
+  border-left: 4px solid var(--color-primary);
+}
+
+.instructions ul {
+  list-style: none;
+  padding: 0;
+}
+
+.instructions li {
+  padding: 8px 0;
+  padding-left: 24px;
+  position: relative;
+  color: var(--color-text-secondary);
+}
+
+.instructions li:before {
+  content: "•";
+  position: absolute;
+  left: 8px;
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.question-card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 20px;
+}
+
+.question-number {
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.question-text {
+  color: var(--color-text);
+  font-size: 18px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.scale-container {
+  margin: 20px 0;
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.scale-options {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.scale-option {
+  flex: 1;
+  min-height: 56px;
+  border: 2px solid var(--color-border);
+  background: white;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.scale-option:active {
+  transform: scale(0.95);
+}
+
+.scale-option.selected {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.navigation {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:disabled {
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.results-screen {
+  text-align: center;
+}
+
+.results-screen h2 {
+  color: var(--color-primary);
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.composite-scores {
+  display: grid;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.composite-card {
+  background: var(--color-surface);
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid var(--color-primary);
+}
+
+.composite-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.composite-name {
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: 18px;
+}
+
+.composite-score {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.subscales {
+  display: grid;
+  gap: 16px;
+  margin: 32px 0;
+  text-align: left;
+}
+
+.subscale-card {
+  background: var(--color-surface);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+
+.subscale-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.subscale-name {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 16px;
+}
+
+.subscale-score {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.subscale-description {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.interpretation {
+  background: var(--color-surface);
+  padding: 24px;
+  border-radius: 12px;
+  margin: 32px 0;
+  text-align: left;
+  border-left: 4px solid var(--color-primary);
+}
+
+.interpretation h3 {
+  color: var(--color-text);
+  margin-bottom: 12px;
+  font-size: 20px;
+}
+
+.interpretation p {
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.interpretation ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 12px;
+}
+
+.interpretation li {
+  padding: 6px 0;
+  padding-left: 20px;
+  position: relative;
+  color: var(--color-text-secondary);
+}
+
+.interpretation li:before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 32px 0 16px 0;
+  text-align: left;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .scale-options {
+    gap: 6px;
+  }
+  .scale-option {
+    min-height: 48px;
+    font-size: 16px;
+  }
+  .question-text {
+    font-size: 16px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="header">
+    <h1>MPFI</h1>
+    <div class="subtitle">Мультимерный опросник психологической гибкости</div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="welcomeScreen" class="welcome-screen">
+      <h2>Добро пожаловать!</h2>
+      
+      <h3>Что измеряет этот тест?</h3>
+      <p>MPFI — это инструмент для оценки вашей психологической гибкости и негибкости. Психологическая гибкость помогает справляться с неприятными мыслями, чувствами и событиями, продолжая двигаться в направлении того, что важно в вашей жизни.</p>
+      
+      <div class="instructions">
+        <h3>Инструкции:</h3>
+        <ul>
+          <li>Прочитайте каждое утверждение внимательно</li>
+          <li>Оцените, насколько оно к вам относилось <strong>за последние две недели</strong></li>
+          <li>Не тратьте времени на размышление — отвечайте интуитивно</li>
+          <li>0 = абсолютно не верно, 5 = абсолютно верно</li>
+          <li>Нет правильных или неправильных ответов</li>
+          <li>Пожалуйста, не пропускайте вопросы</li>
+        </ul>
+      </div>
+      
+      <button class="btn btn-primary" onclick="startTest()" style="width: 100%;">Начать тест</button>
+    </div>
+
+    <div id="questionScreen" class="hidden">
+      <div class="question-card">
+        <div class="question-number" id="questionNumber"></div>
+        <div class="question-text" id="questionText"></div>
+        <div class="scale-container">
+          <div class="scale-labels">
+            <span>Абсолютно НЕ ВЕРНО</span>
+            <span>Абсолютно ВЕРНО</span>
+          </div>
+          <div class="scale-options" id="scaleOptions"></div>
+        </div>
+      </div>
+      <div class="navigation">
+        <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" style="width: 100%;">Назад</button>
+      </div>
+    </div>
+
+    <div id="resultsScreen" class="hidden results-screen">
+      <h2>Ваши результаты</h2>
+      
+      <div class="composite-scores" id="compositeScores"></div>
+      
+      <div class="interpretation" id="interpretation"></div>
+      
+      <div class="section-title">Детальные результаты по компонентам</div>
+      <div class="subscales" id="subscales"></div>
+      
+      <button class="btn btn-primary" onclick="saveResults()" style="width: 100%; margin-top: 20px;">Сохранить результаты</button>
+      <button class="btn btn-secondary" onclick="restartTest()" style="width: 100%; margin-top: 12px;">Пройти тест заново</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const questionBank = [
+  // Шкалы ГИБКОСТИ
+  // Принятие (Acceptance)
+  { text: "Я был открыт к наблюдению за неприятными мыслями и чувствами, не вмешиваясь в них.", subscale: "acceptance" },
+  { text: "Я старался примириться со своими негативными мыслями и чувствами, вместо того чтобы сопротивляться им.", subscale: "acceptance" },
+  { text: "Я освобождал место, чтобы полностью прожить негативные мысли и эмоции, «вдыхая» их, а не отталкивая.", subscale: "acceptance" },
+  { text: "Когда у меня возникала расстраивающая мысль или эмоция, я старался дать ей пространство, а не игнорировать её.", subscale: "acceptance" },
+  { text: "Я открывался всем своим чувствам, как хорошим, так и плохим.", subscale: "acceptance" },
+  
+  // Осознанность настоящего момента (Present Moment Awareness)
+  { text: "Я был внимателен и осознан по отношению к своим эмоциям.", subscale: "present" },
+  { text: "Я был в контакте со своими мыслями и чувствами от момента к моменту.", subscale: "present" },
+  { text: "Я уделял пристальное внимание тому, что я думаю и чувствую.", subscale: "present" },
+  { text: "Я был в контакте с приливами и отливами моих мыслей и чувств.", subscale: "present" },
+  { text: "Я стремился оставаться осознанным и внимательным к собственным мыслям и эмоциям.", subscale: "present" },
+  
+  // Я-как-контекст (Self as Context)
+  { text: "Даже когда я чувствовал боль или расстройство, я старался сохранять более широкую перспективу.", subscale: "self" },
+  { text: "Я проходил через тяжелые моменты, рассматривая свою жизнь с более широкой точки зрения.", subscale: "self" },
+  { text: "Я старался сохранять перспективу, даже когда жизнь сбивала меня с ног.", subscale: "self" },
+  { text: "Когда мне было страшно или боязно, я все равно старался видеть более широкую картину.", subscale: "self" },
+  { text: "Когда случалось что-то болезненное, я старался смотреть на ситуацию взвешенно.", subscale: "self" },
+  
+  // Разделение/Дефьюжн (Defusion)
+  { text: "Я мог позволить негативным чувствам приходить и уходить, не застревая в них.", subscale: "defusion" },
+  { text: "Когда я был расстроен, я мог позволить этим негативным чувствам пройти сквозь меня, не цепляясь за них.", subscale: "defusion" },
+  { text: "Когда мне было страшно или боязно, я мог мягко проживать эти чувства, позволяя им пройти.", subscale: "defusion" },
+  { text: "Я мог сделать шаг назад и заметить негативные мысли и чувства, не реагируя на них.", subscale: "defusion" },
+  { text: "В трудных ситуациях я мог замечать свои мысли и чувства, не будучи переполненным ими.", subscale: "defusion" },
+  
+  // Ценности (Values)
+  { text: "Я был в хорошем контакте с тем, что важно для меня и моей жизни.", subscale: "values" },
+  { text: "Я придерживался своих глубинных жизненных приоритетов.", subscale: "values" },
+  { text: "Я старался ежедневно соединяться с тем, что для меня по-настоящему важно.", subscale: "values" },
+  { text: "Даже когда приходилось делать трудный выбор, я все равно старался ставить в приоритет то, что для меня важно.", subscale: "values" },
+  { text: "Мои глубинные ценности последовательно задавали направление моей жизни.", subscale: "values" },
+  
+  // Ответственные действия (Committed Action)
+  { text: "Даже когда я оступался в своих усилиях, я не бросал работу над тем, что важно.", subscale: "action" },
+  { text: "Даже в тяжелые времена я все равно мог делать шаги навстречу тому, что я ценю в жизни.", subscale: "action" },
+  { text: "Даже когда жизнь становилась напряженной и суматошной, я продолжал работать над тем, что для меня важно.", subscale: "action" },
+  { text: "Я не позволял неудачам замедлять меня в действиях на пути к тому, чего я действительно хочу в жизни.", subscale: "action" },
+  { text: "Я не позволял своим страхам и сомнениям мешать мне действовать в направлении моих целей.", subscale: "action" },
+  
+  // Шкалы НЕГИБКОСТИ
+  // Избегание опыта (Experiential Avoidance)
+  { text: "Когда у меня возникало плохое воспоминание, я пытался отвлечься, чтобы оно ушло.", subscale: "avoidance" },
+  { text: "Я пытался отвлечься, когда чувствовал неприятные эмоции.", subscale: "avoidance" },
+  { text: "Когда приходили неприятные воспоминания, я пытался выбросить их из головы.", subscale: "avoidance" },
+  { text: "Когда всплывало что-то расстраивающее, я очень старался перестать думать об этом.", subscale: "avoidance" },
+  { text: "Если было что-то, о чем я не хотел думать, я перепробовал много способов, чтобы выбросить это из головы.", subscale: "avoidance" },
+  
+  // Отсутствие контакта с настоящим моментом (LCPM)
+  { text: "Я делал большинство вещей «на автомате», почти не осознавая, что я делаю.", subscale: "lcpm" },
+  { text: "Я делал большинство вещей бездумно, не уделяя им особого внимания.", subscale: "lcpm" },
+  { text: "Я проживал большинство дней на автопилоте, не обращая особого внимания на то, что я думаю или чувствую.", subscale: "lcpm" },
+  { text: "Я «плыл по течению» большую часть дней, не обращая особого внимания на происходящее.", subscale: "lcpm" },
+  { text: "Большую часть времени я просто действовал по инерции, не  особо вникая.", subscale: "lcpm" },
+  
+  // Я-как-содержание (Self as Content)
+  { text: "Я думал, что некоторые мои эмоции плохие или неуместные, и я не должен их чувствовать.", subscale: "selfcontent" },
+  { text: "Я критиковал себя за иррациональные или неуместные эмоции.", subscale: "selfcontent" },
+  { text: "Я верил, что некоторые мои мысли ненормальны или плохи, и я не должен так думать.", subscale: "selfcontent" },
+  { text: "Я говорил себе, что не должен чувствовать то, что чувствую.", subscale: "selfcontent" },
+  { text: "Я говорил себе, что не должен думать так, как я думал.", subscale: "selfcontent" },
+  
+  // Слияние (Fusion)
+  { text: "Негативные мысли и чувства имели тенденцию надолго застревать во мне.", subscale: "fusion" },
+  { text: "Тревожные мысли имели тенденцию крутиться в моей голове как заезженная пластинка.", subscale: "fusion" },
+  { text: "Было очень легко попасть в ловушку нежелательных мыслей и чувств.", subscale: "fusion" },
+  { text: "Когда у меня возникали негативные мысли или чувства, мне было очень трудно видеть что-то помимо них.", subscale: "fusion" },
+  { text: "Когда случалось что-то плохое, мне было трудно перестать думать об этом.", subscale: "fusion" },
+  
+  // Отсутствие контакта с ценностями (Lack of Contact with Values)
+  { text: "Мои приоритеты и ценности часто отходили на второй план в повседневной жизни.", subscale: "lackvalues" },
+  { text: "Когда жизнь становилась суматошной, я часто терял контакт с тем, что ценю.", subscale: "lackvalues" },
+  { text: "Вещи, которые я ценю больше всего, часто полностью выпадали из моего списка приоритетов.", subscale: "lackvalues" },
+  { text: "У меня обычно не было времени сосредоточиться на том, что для меня действительно важно.", subscale: "lackvalues" },
+  { text: "Когда наступали тяжелые времена, было легко забыть о том, что я действительно ценю.", subscale: "lackvalues" },
+  
+  // Бездействие (Inaction)
+  { text: "Негативные чувства часто удерживали меня в бездействии.", subscale: "inaction" },
+  { text: "Негативные чувства легко тормозили мои планы.", subscale: "inaction" },
+  { text: "Расстройство оставляло меня застрявшим и бездействующим.", subscale: "inaction" },
+  { text: "Негативный опыт сбивал меня с пути к тому, что действительно важно.", subscale: "inaction" },
+  { text: "Неприятные мысли и чувства легко подавляли мои усилия сделать жизнь более глубокой и насыщенной.", subscale: "inaction" }
+];
+
+const subscaleInfo = {
+  acceptance: { 
+    name: "Принятие", 
+    description: "Способность принимать неприятные переживания без попыток их избежать",
+    type: "flexibility"
+  },
+  present: { 
+    name: "Осознанность настоящего момента", 
+    description: "Способность быть внимательным к настоящему моменту",
+    type: "flexibility"
+  },
+  self: { 
+    name: "Я-как-контекст", 
+    description: "Понимание себя как наблюдателя своих мыслей и чувств",
+    type: "flexibility"
+  },
+  defusion: { 
+    name: "Разделение (Дефьюжн)", 
+    description: "Умение дистанцироваться от мыслей и видеть их как просто мысли",
+    type: "flexibility"
+  },
+  values: { 
+    name: "Ценности", 
+    description: "Ясность в отношении того, что действительно важно в жизни",
+    type: "flexibility"
+  },
+  action: { 
+    name: "Ответственные действия", 
+    description: "Способность действовать в соответствии со своими ценностями",
+    type: "flexibility"
+  },
+  avoidance: { 
+    name: "Избегание опыта", 
+    description: "Попытки дистанцироваться от нежелательных переживаний",
+    type: "inflexibility"
+  },
+  lcpm: { 
+    name: "Отсутствие контакта с настоящим моментом", 
+    description: "Недостаток внимания к своим переживаниям в данный момент",
+    type: "inflexibility"
+  },
+  selfcontent: { 
+    name: "Я-как-содержание", 
+    description: "Суждения о переживаниях, приводящие к узкому взгляду на себя",
+    type: "inflexibility"
+  },
+  fusion: { 
+    name: "Слияние (Фьюжн)", 
+    description: "Застревание в нежелательных внутренних переживаниях",
+    type: "inflexibility"
+  },
+  lackvalues: { 
+    name: "Отсутствие контакта с ценностями", 
+    description: "Отсоединённость от того, что наиболее значимо для себя",
+    type: "inflexibility"
+  },
+  inaction: { 
+    name: "Бездействие", 
+    description: "Неспособность вести себя в соответствии с тем, что важно в жизни",
+    type: "inflexibility"
+  }
+};
+
+let currentQuestion = 0;
+let answers = new Array(60).fill(null);
+let shuffledQuestions = [];
+let questionMapping = {}; // Маппинг: индекс в shuffledQuestions -> оригинальный индекс
+
+// Функция для перемешивания массива (Fisher-Yates shuffle)
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Проверка: не более 3 вопросов подряд из одной субшкалы
+function isValidSequence(questions) {
+  for (let i = 0; i < questions.length - 2; i++) {
+    if (questions[i].subscale === questions[i + 1].subscale && 
+        questions[i].subscale === questions[i + 2].subscale) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Исправление последовательности
+function fixSequence(questions) {
+  const fixed = [...questions];
+  let attempts = 0;
+  const maxAttempts = 1000;
+  
+  while (!isValidSequence(fixed) && attempts < maxAttempts) {
+    // Найти первое нарушение
+    for (let i = 0; i < fixed.length - 2; i++) {
+      if (fixed[i].subscale === fixed[i + 1].subscale && 
+          fixed[i].subscale === fixed[i + 2].subscale) {
+        // Найти место для перестановки третьего элемента
+        for (let j = i + 3; j < fixed.length; j++) {
+          // Проверяем, можно ли поменять местами
+          if (fixed[j].subscale !== fixed[i].subscale &&
+              fixed[j].subscale !== fixed[i + 1].subscale) {
+            // Меняем местами
+            [fixed[i + 2], fixed[j]] = [fixed[j], fixed[i + 2]];
+            break;
+          }
+        }
+        break;
+      }
+    }
+    attempts++;
+  }
+  
+  return fixed;
+}
+
+// Создание умно перемешанной последовательности
+function createSmartShuffledQuestions() {
+  let shuffled = shuffleArray(questionBank.map((q, idx) => ({...q, originalIndex: idx})));
+  
+  // Проверяем и исправляем последовательность
+  if (!isValidSequence(shuffled)) {
+    shuffled = fixSequence(shuffled);
+  }
+  
+  // Создаем маппинг
+  questionMapping = {};
+  shuffled.forEach((q, newIdx) => {
+    questionMapping[newIdx] = q.originalIndex;
+  });
+  
+  return shuffled;
+}
+
+function startTest() {
+  // Создаем новую рандомизированную последовательность при каждом запуске
+  shuffledQuestions = createSmartShuffledQuestions();
+  currentQuestion = 0;
+  answers = new Array(60).fill(null);
+  
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('questionScreen').classList.remove('hidden');
+  showQuestion(0);
+}
+
+function showQuestion(index) {
+  currentQuestion = index;
+  const question = shuffledQuestions[index];
+  
+  document.getElementById('questionNumber').textContent = `Вопрос ${index + 1} из 60`;
+  document.getElementById('questionText').textContent = question.text;
+  
+  const scaleOptions = document.getElementById('scaleOptions');
+  scaleOptions.innerHTML = '';
+  
+  // Показываем 0-5, но храним как 1-6
+  for (let i = 0; i <= 5; i++) {
+    const option = document.createElement('div');
+    option.className = 'scale-option';
+    option.textContent = i;
+    
+    if (answers[index] === i + 1) {
+      option.classList.add('selected');
+    }
+    
+    option.onclick = () => selectAnswer(i + 1);
+    scaleOptions.appendChild(option);
+  }
+  
+  document.getElementById('prevBtn').disabled = index === 0;
+  updateProgress();
+}
+
+function selectAnswer(value) {
+  answers[currentQuestion] = value;
+  
+  const options = document.querySelectorAll('.scale-option');
+  options.forEach((opt, idx) => {
+    opt.classList.toggle('selected', idx === value - 1);
+  });
+  
+  setTimeout(() => {
+    if (currentQuestion < 59) {
+      showQuestion(currentQuestion + 1);
+    } else {
+      showResults();
+    }
+  }, 300);
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    showQuestion(currentQuestion - 1);
+  }
+}
+
+function updateProgress() {
+  const answered = answers.filter(a => a !== null).length;
+  const progress = (answered / 60) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+}
+
+function calculateResults() {
+  const subscales = {};
+  
+  // Инициализация субшкал
+  Object.keys(subscaleInfo).forEach(key => {
+    subscales[key] = {
+      ...subscaleInfo[key],
+      items: [],
+      score: 0,
+      average: 0
+    };
+  });
+  
+  // Подсчет баллов с учетом рандомизации
+  answers.forEach((answer, shuffledIdx) => {
+    const question = shuffledQuestions[shuffledIdx];
+    subscales[question.subscale].items.push(answer);
+    subscales[question.subscale].score += answer;
+  });
+  
+  // Вычисление средних
+  Object.keys(subscales).forEach(key => {
+    subscales[key].average = (subscales[key].score / subscales[key].items.length).toFixed(2);
+  });
+  
+  // Глобальные композиты
+  const flexibilityScales = ['acceptance', 'present', 'self', 'defusion', 'values', 'action'];
+  const inflexibilityScales = ['avoidance', 'lcpm', 'selfcontent', 'fusion', 'lackvalues', 'inaction'];
+  
+  const flexibilityAvg = flexibilityScales.reduce((sum, key) => sum + parseFloat(subscales[key].average), 0) / 6;
+  const inflexibilityAvg = inflexibilityScales.reduce((sum, key) => sum + parseFloat(subscales[key].average), 0) / 6;
+  
+  return { subscales, flexibilityAvg: flexibilityAvg.toFixed(2), inflexibilityAvg: inflexibilityAvg.toFixed(2) };
+}
+
+function getInterpretation(flexScore, inflexScore) {
+  let flexLevel = '';
+  let inflexLevel = '';
+  
+  if (flexScore >= 5.0) flexLevel = 'очень высокий';
+  else if (flexScore >= 4.5) flexLevel = 'высокий';
+  else if (flexScore >= 3.5) flexLevel = 'средний';
+  else if (flexScore >= 2.5) flexLevel = 'ниже среднего';
+  else flexLevel = 'низкий';
+  
+  if (inflexScore >= 4.5) inflexLevel = 'очень высокий';
+  else if (inflexScore >= 3.5) inflexLevel = 'высокий';
+  else if (inflexScore >= 2.5) inflexLevel = 'средний';
+  else if (inflexScore >= 1.5) inflexLevel = 'ниже среднего';
+  else inflexLevel = 'низкий';
+  
+  let interpretation = `<h3>Интерпретация результатов</h3>`;
+  
+  interpretation += `<p><strong>Психологическая гибкость:</strong> Ваш уровень ${flexLevel} (средний балл: ${flexScore}). `;
+  
+  if (flexScore >= 4.5) {
+    interpretation += `Это указывает на высокий уровень психологической гибкости. Вы эффективно справляетесь с трудными мыслями и эмоциями, живёте в соответствии со своими ценностями и способны действовать целенаправленно даже в сложных ситуациях.`;
+  } else if (flexScore >= 3.5) {
+    interpretation += `Это находится в среднем диапазоне. У вас есть хорошая основа для работы с трудностями, но есть области, в которых можно развить больше навыков осознанности и принятия.`;
+  } else {
+    interpretation += `Это указывает на относительно низкий уровень психологической гибкости. Развитие навыков в этих областях может помочь вам более эффективно справляться с жизненными вызовами.`;
+  }
+  
+  interpretation += `</p><p><strong>Психологическая негибкость:</strong> Ваш уровень ${inflexLevel} (средний балл: ${inflexScore}). `;
+  
+  if (inflexScore >= 3.5) {
+    interpretation += `Это указывает на повышенный уровень психологической негибкости. Возможно, вы часто избегаете неприятных переживаний, застреваете в мыслях или испытываете трудности с действиями в соответствии с тем, что важно. Рассмотрите возможность работы с терапевтом, специализирующимся на ACT или работе с психологической гибкостью.`;
+  } else if (inflexScore >= 2.5) {
+    interpretation += `Это находится в среднем диапазоне. Иногда вы можете застревать в сложных мыслях и эмоциях, но это не является постоянной проблемой.`;
+  } else {
+    interpretation += `Это указывает на относительно низкий уровень психологической негибкости, что является благоприятным показателем.`;
+  }
+  
+  interpretation += `</p>`;
+  
+  interpretation += `<p><strong>Важные примечания:</strong></p><ul>`;
+  interpretation += `<li>Эти результаты основаны на исследовании Rolffs, Rogge и Wilson (2016) с нормативной выборкой</li>`;
+  interpretation += `<li>MPFI измеряет 12 отдельных процессов, которые могут меняться независимо друг от друга</li>`;
+  interpretation += `<li>Психологическая гибкость и негибкость - это не противоположные концы одного спектра, а различные процессы</li>`;
+  interpretation += `<li>Результаты отражают ваше состояние за последние две недели</li>`;
+  interpretation += `<li>Для более глубокого понимания рекомендуется обратиться к квалифицированному специалисту</li>`;
+  interpretation += `</ul>`;
+  
+  return interpretation;
+}
+
+function showResults() {
+  const { subscales, flexibilityAvg, inflexibilityAvg } = calculateResults();
+  
+  document.getElementById('questionScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.remove('hidden');
+  
+  // Глобальные композиты
+  const compositesDiv = document.getElementById('compositeScores');
+  compositesDiv.innerHTML = `
+    <div class="composite-card">
+      <div class="composite-header">
+        <div class="composite-name">Психологическая гибкость</div>
+        <div class="composite-score">${flexibilityAvg}</div>
+      </div>
+      <div class="subscale-description">Средний балл по 6 компонентам гибкости</div>
+    </div>
+    <div class="composite-card">
+      <div class="composite-header">
+        <div class="composite-name">Психологическая негибкость</div>
+        <div class="composite-score">${inflexibilityAvg}</div>
+      </div>
+      <div class="subscale-description">Средний балл по 6 компонентам негибкости</div>
+    </div>
+  `;
+  
+  // Интерпретация
+  document.getElementById('interpretation').innerHTML = getInterpretation(parseFloat(flexibilityAvg), parseFloat(inflexibilityAvg));
+  
+  // Субшкалы
+  const subscalesDiv = document.getElementById('subscales');
+  subscalesDiv.innerHTML = '';
+  
+  // Сначала гибкость
+  subscalesDiv.innerHTML += '<h3 style="margin: 20px 0 12px 0; color: var(--color-text);">Компоненты психологической гибкости</h3>';
+  Object.entries(subscales).forEach(([key, sub]) => {
+    if (sub.type === 'flexibility') {
+      const card = document.createElement('div');
+      card.className = 'subscale-card';
+      card.innerHTML = `
+        <div class="subscale-header">
+          <div class="subscale-name">${sub.name}</div>
+          <div class="subscale-score">${sub.average}</div>
+        </div>
+        <div class="subscale-description">${sub.description}</div>
+      `;
+      subscalesDiv.appendChild(card);
+    }
+  });
+  
+  // Затем негибкость
+  subscalesDiv.innerHTML += '<h3 style="margin: 32px 0 12px 0; color: var(--color-text);">Компоненты психологической негибкости</h3>';
+  Object.entries(subscales).forEach(([key, sub]) => {
+    if (sub.type === 'inflexibility') {
+      const card = document.createElement('div');
+      card.className = 'subscale-card';
+      card.innerHTML = `
+        <div class="subscale-header">
+          <div class="subscale-name">${sub.name}</div>
+          <div class="subscale-score">${sub.average}</div>
+        </div>
+        <div class="subscale-description">${sub.description}</div>
+      `;
+      subscalesDiv.appendChild(card);
+    }
+  });
+  
+  updateProgress();
+}
+
+function saveResults() {
+  const { subscales, flexibilityAvg, inflexibilityAvg } = calculateResults();
+  const date = new Date().toLocaleString('ru-RU');
+  
+  let content = "MPFI - Результаты Мультимерного опросника психологической гибкости\n";
+  content += "=".repeat(70) + "\n";
+  content += "Дата: " + date + "\n\n";
+  
+  content += "ГЛОБАЛЬНЫЕ ПОКАЗАТЕЛИ\n";
+  content += "=".repeat(70) + "\n";
+  content += "Психологическая гибкость: " + flexibilityAvg + " (средний балл)\n";
+  content += "Психологическая негибкость: " + inflexibilityAvg + " (средний балл)\n\n";
+  
+  content += "КОМПОНЕНТЫ ПСИХОЛОГИЧЕСКОЙ ГИБКОСТИ\n";
+  content += "=".repeat(70) + "\n";
+  Object.entries(subscales).forEach(([key, sub]) => {
+    if (sub.type === 'flexibility') {
+      content += "\n" + sub.name + ": " + sub.average + "\n";
+      content += sub.description + "\n";
+    }
+  });
+  
+  content += "\nКОМПОНЕНТЫ ПСИХОЛОГИЧЕСКОЙ НЕГИБКОСТИ\n";
+  content += "=".repeat(70) + "\n";
+  Object.entries(subscales).forEach(([key, sub]) => {
+    if (sub.type === 'inflexibility') {
+      content += "\n" + sub.name + ": " + sub.average + "\n";
+      content += sub.description + "\n";
+    }
+  });
+  
+  content += "\n" + "=".repeat(70) + "\n";
+  content += "ПРИМЕЧАНИЯ:\n";
+  content += "- Баллы представлены как средние значения по шкале от 1 до 6\n";
+  content += "- Результаты основаны на последних двух неделях\n";
+  content += "- Для интерпретации рекомендуется обратиться к специалисту\n";
+  content += "\nИсточник: Rolffs, J. L., Rogge, R. D., & Wilson, K. G. (2016).\n";
+  content += "Assessment, DOI: 10.1177/1073191116645905\n";
+  
+  const dataUrl = 'data:text/plain;charset=utf-8,' + encodeURIComponent(content);
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = `MPFI_${new Date().toISOString().split('T')[0]}.txt`;
+  
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function restartTest() {
+  currentQuestion = 0;
+  answers = new Array(60).fill(null);
+  shuffledQuestions = [];
+  questionMapping = {};
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('welcomeScreen').classList.remove('hidden');
+  updateProgress();
+}
+</script>
+
+<!-- Регистрация Service Worker для PWA -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(registration => {
+        console.log('✅ Service Worker зарегистрирован:', registration.scope);
+      })
+      .catch(error => {
+        console.log('❌ Ошибка регистрации Service Worker:', error);
+      });
+  });
+}
+</script>
+
+</body>
+</html>
